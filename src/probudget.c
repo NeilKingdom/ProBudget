@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ncurses.h>
-
 #include "include/probudget.h"
 
 #define MONTHS 12
@@ -17,6 +16,10 @@ int main(int argc, char *args[]) {
 	int x, y = 0;
 	int ch;
 	WINDOW *cursor;
+
+	char *months[MONTHS] = {"Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov"};
+	char *profits[PROFITS] = {"Work", "Gifts", "Other", "", ""};
+	char *expenses[EXPENSES] = {"Food", "Gas", "Clothing", "Gifts", "Dates", "Electronics", "Games", "Hair Cuts"};
 	
 	/* Initialization */
 	initscr();
@@ -39,11 +42,21 @@ int main(int argc, char *args[]) {
 
 	getmaxyx(stdscr, rowNum, colNum);
 	mvprintw(0, (colNum/2)-6, "ProBudget");
-	mvprintw(1, 0, "");
 	rowNum = (int)floor(rowNum/(MONTHS*2));
 	colNum = (int)floor(colNum/(MONTHS*2));
-	cursor = newwin(1, 1, 0, 0);
+	cursor = newwin(rowNum, colNum, 0, 0);
 
+	int i, j;
+	for(i = 0, j = 1; i < MONTHS; i++, j+=2) {
+		mvprintw(rowNum*2, j*colNum, months[i]);
+		mvprintw(rowNum*2, (j+1)*colNum, months[i]);	
+	}
+	for(i = 0, j = 3; i < PROFITS; i++, j++) {
+		mvprintw(j*rowNum, 0, profits[i]);
+	}
+	for(i = 0; i < EXPENSES; i++) {
+		mvprintw(++j*rowNum, 0, expenses[i]);
+	}
 	refresh();
 
 	/* Main loop */
@@ -71,12 +84,10 @@ int main(int argc, char *args[]) {
 				y+=rowNum;
 				break;
 		}
-		move(y, x);
+		wmove(cursor, y, x); /* Move the cursor */
 		mvchgat(y, x, colNum, A_BOLD, 2, NULL);
 	}
 
 	endwin();
 	return 0;
 }
-
-void refreshText(void);
