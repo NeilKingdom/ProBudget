@@ -1,23 +1,28 @@
-#Compiler
-CC=gcc
-#Compiler options
-CFLAGS=-g -Wall -I.
+#Header directory
+DDIR=include
 #Header files
-DEPS=NULL
+_DEPS=probudget.h
+#Path to header files
+DEPS=$(patsubst %,$(DDIR)/%,$(_DEPS))
 #Library dependencies
 LIBS=-lncurses -lm
 
 #Source directory
-ODIR=src
+ODIR=obj
 #All object files
-_OBJ=ProBudget.o
+_OBJ=probudget.o
 #Path to object files
 OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
 
-$(ODIR)/%.o: $(ODIR)/%.c
+#Compiler
+CC=gcc
+#Compiler options
+CFLAGS=-g -Wall -I$(DDIR)
+
+$(ODIR)/%.o: probudget.c $(DEPS) 
 	$(CC) -c -o $@ $< $(CFLAGS) 
 
-install: $(OBJ) 
+install: $(OBJ)
 	$(CC) -o ProBudget $^ $(LIBS) $(CFLAGS) 
 
 .PHONY: clean
